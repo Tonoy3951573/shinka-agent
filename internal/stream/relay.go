@@ -119,12 +119,17 @@ func (r *Relay) Start() {
 			"-timeout", "5000000",
 			"-i", sourceURL,
 			// Relay output
+			"-map", "0:v",
+			"-map", "0:a?",
 			"-c", "copy",
 			"-f", "rtsp",
 			"-rtsp_transport", "tcp",
 			targetURL,
 			// Local segment output
-			"-c", "copy",
+			"-map", "0:v",
+			"-map", "0:a?",
+			"-c:v", "copy",
+			"-c:a", "aac",
 			"-f", "segment",
 			"-segment_time", "30",
 			"-segment_format", "mp4",
