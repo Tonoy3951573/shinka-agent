@@ -105,7 +105,7 @@ func (r *Relay) Start() {
 
 		// FFmpeg command:
 		//   -rtsp_transport tcp     : Use TCP for reliable transport
-		//   -stimeout 5000000       : 5-second connect/read timeout to prevent hang
+		//   -timeout 5000000        : 5-second connect/read timeout (microseconds)
 		//   -i <source>             : Input RTSP stream
 		//   -c copy                 : No transcoding (passthrough)
 		//   -f rtsp                 : Output format RTSP
@@ -116,7 +116,7 @@ func (r *Relay) Start() {
 			"-hide_banner",
 			"-loglevel", "warning",
 			"-rtsp_transport", "tcp",
-			"-stimeout", "5000000",
+			"-timeout", "5000000",
 			"-i", sourceURL,
 			// Relay output
 			"-c", "copy",
