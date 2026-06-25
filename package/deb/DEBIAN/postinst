@@ -1,0 +1,56 @@
+#!/bin/bash
+# Debian post-installation script for shinka-agent
+set -e
+
+CONFIG_DIR="/etc/shinka-agent"
+CONFIG_FILE="$CONFIG_DIR/agent.yml"
+LOG_DIR="/var/log/shinka-agent"
+STATE_DIR="/var/lib/shinka-agent"
+CLIPS_DIR="/var/lib/shinka-agent/clips"
+
+# Create system user and group if they do not exist
+if ! id -u shinka-agent &>/dev/null; then
+    echo "Creating shinka-agent system user and group..."
+    groupadd --system shinka-agent
+    useradd --system --gid shinka-agent --no-create-home --shell /usr/sbin/nologin --comment "Shinka Dynamics Camera Agent" shinka-agent
+fi
+
+# Create directories
+mkdir -p "$CONFIG_DIR"
+mkdir -p "$LOG_DIR"
+mkdir -p "$STATE_DIR"
+mkdir -p "$CLIPS_DIR"
+
+# Write default template if config doesn't exist
+if [ ! -f "$CONFIG_FILE" ]; then
+    cat <<EOF > "$CONFIG_FILE"
+server_url: "http://localhost:3000"
+api_key: ""
+agent_name: "Debian Agent"
+state_dir: "/var/lib/shinka-agent"
+clips_dir: "/var/lib/shinka-agent/clips"
+max_clips_size_gb: 2.0
+upload_concurrency: 2
+EOF
+    echo "Created config template at $CONFIG_FILE. Please update with your server credentials."
+fi
+
+# Adjust permissions and ownership
+chown -R root:shinka-agent "$CONFIG_DIR"
+chmod 750 "$CONFIG_DIR"
+chmod 640 "$CONFIG_FILE"
+
+chown -R shinka-agent:shinka-agent "$LOG_DIR"
+chown -R shinka-agent:shinka-agent "$STATE_DIR"
+chmod 750 "$LOG_DIR"
+chmod 750 "$STATE_DIR"
+chmod 750 "$CLIPS_DIR"
+
+# Enable and start systemd daemon
+if [ -d /run/systemd/system ]; then
+    systemctl daemon-reload || true
+    systemctl enable shinka-agent.service || true
+    systemctl restart shinka-agent.service || true
+fi
+
+exit 0

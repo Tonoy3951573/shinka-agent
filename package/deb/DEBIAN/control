@@ -1,0 +1,9 @@
+Package: shinka-agent
+Version: 1.0.0
+Section: utils
+Priority: optional
+Architecture: amd64
+Depends: ffmpeg, libc6
+Maintainer: Shinka Dynamics <support@shinkadynamics.com>
+Description: Local Camera Agent for Shinka Dynamics
+ Relays local RTSP feeds to MediaMTX and uploads sliced interaction segments.

@@ -1,0 +1,18 @@
+[Unit]
+Description=Shinka Dynamics Local Camera Agent
+After=network.target
+
+[Service]
+Type=simple
+User=shinka-agent
+Group=shinka-agent
+LogsDirectory=shinka-agent
+ExecStart=/usr/local/bin/shinka-agent -config /etc/shinka-agent/agent.yml
+WorkingDirectory=/etc/shinka-agent
+Restart=always
+RestartSec=10
+StandardOutput=append:/var/log/shinka-agent/output.log
+StandardError=append:/var/log/shinka-agent/error.log
+
+[Install]
+WantedBy=multi-user.target

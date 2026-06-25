@@ -1,0 +1,15 @@
+# ── Shinka Dynamics Local Agent Configuration ────────────────────────────────
+# Copy this file to agent.yml and fill in your values.
+
+# Backend server URL (where the dashboard is hosted)
+server_url: "http://your-server-ip:3000"
+
+# Agent API key (obtained from Dashboard → Agents → Register)
+api_key: "sk_your_agent_api_key_here"
+
+# Human-readable agent name
+agent_name: "Office Agent 1"
+
+# MediaMTX RTSP server URL (usually the same host as the backend)
+# If omitted, derived from server_url
+# mediamtx_url: "rtsp://your-server-ip"
