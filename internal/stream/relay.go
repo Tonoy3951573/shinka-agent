@@ -128,7 +128,6 @@ func (r *Relay) Start() {
 			"-f", "segment",
 			"-segment_time", "30",
 			"-segment_format", "mp4",
-			"-segment_write_temp", "1",
 			"-reset_timestamps", "1",
 			"-strftime", "1",
 			filepath.Join(clipsDir, "clip_"+r.config.CameraID+"_%Y%m%d_%H%M%S.mp4"),
