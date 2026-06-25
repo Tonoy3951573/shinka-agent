@@ -10,6 +10,7 @@ import (
 	"log"
 	"mime/multipart"
 	"net/http"
+	"net/textproto"
 	"os"
 	"path/filepath"
 	"strings"
@@ -208,6 +209,18 @@ func (u *Uploader) scanAndUpload() {
 			continue
 		}
 
+		info, err := file.Info()
+		if err != nil {
+			log.Printf("[uploader] Failed to get file info for %s: %v", name, err)
+			continue
+		}
+
+		// If the file was modified very recently (within 15 seconds), it's likely
+		// the active segment currently being written by FFmpeg. Skip it.
+		if time.Since(info.ModTime()) < 15*time.Second {
+			continue
+		}
+
 		cameraID, startTime, err := parseFilename(name)
 		if err != nil {
 			log.Printf("[uploader] Skipping file %s: %v", name, err)
@@ -335,8 +348,12 @@ func (u *Uploader) uploadClip(interactionID string, filePath string) error {
 		return err
 	}
 
-	// Create file part
-	part, err := writer.CreateFormFile("clip", filepath.Base(strings.TrimSuffix(filePath, ".upload")))
+	// Create file part with explicit Content-Type: video/mp4
+	filename := filepath.Base(strings.TrimSuffix(filePath, ".upload"))
+	h := make(textproto.MIMEHeader)
+	h.Set("Content-Disposition", fmt.Sprintf(`form-data; name="clip"; filename="%s"`, filename))
+	h.Set("Content-Type", "video/mp4")
+	part, err := writer.CreatePart(h)
 	if err != nil {
 		return err
 	}
