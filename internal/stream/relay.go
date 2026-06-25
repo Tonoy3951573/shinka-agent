@@ -115,6 +115,8 @@ func (r *Relay) Start() {
 		r.cmd = exec.Command("ffmpeg",
 			"-hide_banner",
 			"-loglevel", "warning",
+			"-use_wallclock_as_timestamps", "1",
+			"-fflags", "+genpts",
 			"-rtsp_transport", "tcp",
 			"-timeout", "5000000",
 			"-i", sourceURL,
