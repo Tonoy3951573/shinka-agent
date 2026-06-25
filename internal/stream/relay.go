@@ -79,7 +79,8 @@ func (r *Relay) buildTargetURL() string {
 
 // Start begins the FFmpeg relay process with automatic restart on failure.
 func (r *Relay) Start() {
-	log.Printf("[relay:%s] Starting stream relay: %s → %s", r.config.CameraName, r.config.RTSPUrl, r.config.StreamPath)
+	targetURL := r.buildTargetURL()
+	log.Printf("[relay:%s] Starting stream relay: %s → %s", r.config.CameraName, r.config.RTSPUrl, targetURL)
 
 	clipsDir := r.config.ClipsDir
 	if clipsDir == "" {
@@ -101,7 +102,6 @@ func (r *Relay) Start() {
 		}
 
 		sourceURL := r.buildSourceURL()
-		targetURL := r.buildTargetURL()
 
 		// FFmpeg command:
 		//   -rtsp_transport tcp     : Use TCP for reliable transport
@@ -132,6 +132,8 @@ func (r *Relay) Start() {
 			"-strftime", "1",
 			filepath.Join(clipsDir, "clip_"+r.config.CameraID+"_%Y%m%d_%H%M%S.mp4"),
 		)
+
+		r.cmd.Stderr = os.Stderr
 
 		r.mu.Lock()
 		r.status = "online"
